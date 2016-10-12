@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 char START_SYMBOL;
 
@@ -92,6 +93,46 @@ void make_augmented_grammer(states *grammer) {
   prod->body[0] = START_SYMBOL;
   prod->body[1] = '\0';
   push_prod_in_state(prod,grammer);
+}
+
+bool equivalent_productions(production *prod1, production *prod2) {
+  if(prod1->pos == prod2->pos &&
+    prod1->head == prod2->head &&
+    (strcmp(prod1->body,prod2->body) == 0)
+  ) {
+    return true;
+  }
+
+  return false;
+  }
+
+bool equivalent_state(states *state1, states *state2) {
+  if(state1->no_of_prod != state2->no_of_prod) {
+    return false;
+  }
+
+  bool matched = false;
+  production *prod1 = state1->productions;
+  production *prod2;
+
+  int i,j;
+  while(prod1 != NULL) {
+    prod2 = state2->productions;
+     while(prod2 != NULL) {
+      if(equivalent_productions(prod1,prod2)) {
+        matched = true;
+        break;
+      }
+
+      prod2 = prod2->next_prod;
+    }
+    if(!matched) {
+      return false;
+    }
+    prod1 = prod1->next_prod;
+    matched = false;
+  }
+  return true;
 }
 
 int main() {
