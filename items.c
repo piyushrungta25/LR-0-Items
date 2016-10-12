@@ -106,31 +106,28 @@ bool equivalent_productions(production *prod1, production *prod2) {
   return false;
   }
 
+bool prod_in_state(production *prod, states *state) {
+  production *prod1 = state->productions;
+  while(prod1 != NULL) {
+    if(equivalent_productions(prod1,prod)) {
+      return true;
+    }
+    prod1 = prod1->next_prod;
+  }
+  return false;
+}
+
 bool equivalent_state(states *state1, states *state2) {
   if(state1->no_of_prod != state2->no_of_prod) {
     return false;
   }
 
-  bool matched = false;
   production *prod1 = state1->productions;
-  production *prod2;
-
-  int i,j;
   while(prod1 != NULL) {
-    prod2 = state2->productions;
-     while(prod2 != NULL) {
-      if(equivalent_productions(prod1,prod2)) {
-        matched = true;
-        break;
-      }
-
-      prod2 = prod2->next_prod;
-    }
-    if(!matched) {
-      return false;
-    }
+     if(!prod_in_state(prod1,state2)) {
+       return false;
+     }
     prod1 = prod1->next_prod;
-    matched = false;
   }
   return true;
 }
