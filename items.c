@@ -22,6 +22,35 @@ typedef struct set{
   states *states;
 }set;
 
+void print_state(states *);
+
+states *get_empty_state();
+
+production *get_empty_production();
+
+void push_prod_in_state(production *,states *);
+
+states *get_grammer(char *);
+
+void make_augmented_grammer(states *);
+
+bool equivalent_productions(production *, production *);
+
+bool prod_in_state(production *, states *);
+
+bool equivalent_state(states *, states *);
+
+int main() {
+
+  states *grammer = get_grammer("grammer");
+  print_state(grammer);
+  make_augmented_grammer(grammer);
+  print_state(grammer);
+
+
+  return 0;
+}
+
 void print_state(states *state) {
   production *temp_prod;
   temp_prod = state->productions;
@@ -58,9 +87,11 @@ production *get_empty_production() {
 }
 
 void push_prod_in_state(production *prod,states *state) {
-  prod->next_prod = state->productions;
-  state->productions = prod;
-  state->no_of_prod++;
+  if(!prod_in_state(prod,state)) {
+    prod->next_prod = state->productions;
+    state->productions = prod;
+    state->no_of_prod++;
+  }
 }
 
 states *get_grammer(char *file_name) {
@@ -130,15 +161,4 @@ bool equivalent_state(states *state1, states *state2) {
     prod1 = prod1->next_prod;
   }
   return true;
-}
-
-int main() {
-
-  states *grammer = get_grammer("grammer");
-  print_state(grammer);
-  make_augmented_grammer(grammer);
-  print_state(grammer);
-
-
-  return 0;
 }
