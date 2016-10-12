@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 char START_SYMBOL;
 
@@ -40,18 +41,37 @@ bool prod_in_state(production *, states *);
 
 bool equivalent_state(states *, states *);
 
+bool is_terminal(char);
+
+production *duplicate_production(production *);
+
+void delete_production(production *prod);
+
+states *duplicate_state(states *);
+
+states *closure(states *, states *);
+
 int main() {
 
   states *grammer = get_grammer("grammer");
   print_state(grammer);
   make_augmented_grammer(grammer);
   print_state(grammer);
-
+  production *prod = get_empty_production();
+  prod->head = 'Z';
+  prod->body[0] = START_SYMBOL;
+  prod->body[1] = '\0';
+  prod->pos = 0;
+  states *state = get_empty_state();
+  push_prod_in_state(prod,state);
+  print_state(state);
+  print_state(closure(state,grammer));
 
   return 0;
 }
 
 void print_state(states *state) {
+  printf("=========\n");
   production *temp_prod;
   temp_prod = state->productions;
 
@@ -68,6 +88,7 @@ void print_state(states *state) {
     printf("\n");
     temp_prod = temp_prod->next_prod;
   }
+  printf("=========\n");
 }
 
 states *get_empty_state() {
@@ -82,7 +103,7 @@ production *get_empty_production() {
   production *prod = (production *)malloc(sizeof(production));
   prod->next_prod = NULL;
   prod->pos = -1;
-  prod->body = NULL;
+  prod->body = (char *)malloc(16*sizeof(char));
   return prod;
 }
 
@@ -108,7 +129,6 @@ states *get_grammer(char *file_name) {
     buffer[strlen(buffer)-1] = '\0';
     prod = get_empty_production();
     prod->head = buffer[0];
-    prod->body = (char *)malloc(16*sizeof(char));
     memcpy(prod->body,buffer+3,strlen(buffer)-2);
     push_prod_in_state(prod,grammer);
 
@@ -120,7 +140,6 @@ states *get_grammer(char *file_name) {
 void make_augmented_grammer(states *grammer) {
   production *prod = get_empty_production();
   prod->head = 'Z';
-  prod->body = (char *)malloc(16*sizeof(char));
   prod->body[0] = START_SYMBOL;
   prod->body[1] = '\0';
   push_prod_in_state(prod,grammer);
@@ -161,4 +180,74 @@ bool equivalent_state(states *state1, states *state2) {
     prod1 = prod1->next_prod;
   }
   return true;
+}
+
+bool is_terminal(char c) {
+  return isalpha(c) && isupper(c);
+}
+
+production *duplicate_production(production *prod) {
+  production *new_prod = get_empty_production();
+  new_prod->pos = prod->pos;
+  new_prod->head = prod->head;
+  new_prod->next_prod = NULL;
+  strcpy(new_prod->body,prod->body);
+  return new_prod;
+}
+
+void delete_production(production *prod) {
+  free(prod->body);
+  free(prod);
+}
+
+states *duplicate_state(states *state) {
+  states *new_state = get_empty_state();
+  production *prod = state->productions;
+  while(prod != NULL) {
+    push_prod_in_state(duplicate_production(prod),new_state);
+
+    prod = prod->next_prod;
+  }
+  return new_state;
+}
+
+states *closure(states *state, states *grammer) {
+  states *closed = duplicate_state(state);
+  production *prod = closed->productions;
+  production *grammer_prod = grammer->productions;
+  production *temp;
+  bool changed = false;
+
+  while(1) {
+    changed = false;
+    prod = closed->productions;
+    while( prod != NULL ){
+        if(
+          prod->pos != strlen(prod->body) &&
+          is_terminal(prod->body[prod->pos])
+        ) {
+          grammer_prod = grammer->productions;
+          while(grammer_prod != NULL) {
+            if(grammer_prod->head == prod->body[prod->pos]) {
+                temp = duplicate_production(grammer_prod);
+                temp->pos = 0;
+                if(!prod_in_state(temp,closed)) {
+                push_prod_in_state(temp,closed);
+                changed = true;
+              }
+              else {
+                delete_production(temp);
+              }
+            }
+            grammer_prod = grammer_prod->next_prod;
+          }
+        }
+
+      prod = prod->next_prod;
+    }
+    if(!changed) {
+      return closed;
+    }
+  }
+
 }
