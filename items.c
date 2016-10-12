@@ -12,6 +12,7 @@ typedef struct production{
 }production;
 
 typedef struct states{
+  int no_of_prod;
   production *productions;
   struct states *next_state;
 }states;
@@ -43,6 +44,7 @@ states *get_empty_state() {
   states *state = (states *)malloc(sizeof(states));
   state->next_state = NULL;
   state->productions = NULL;
+  state->no_of_prod =0;
   return state;
 }
 
@@ -57,6 +59,7 @@ production *get_empty_production() {
 void push_prod_in_state(production *prod,states *state) {
   prod->next_prod = state->productions;
   state->productions = prod;
+  state->no_of_prod++;
 }
 
 states *get_grammer(char *file_name) {
