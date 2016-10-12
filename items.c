@@ -46,6 +46,19 @@ states *get_empty_state() {
   return state;
 }
 
+production *get_empty_production() {
+  production *prod = (production *)malloc(sizeof(production));
+  prod->next_prod = NULL;
+  prod->pos = -1;
+  prod->body = NULL;
+  return prod;
+}
+
+void push_prod_in_state(production *prod,states *state) {
+  prod->next_prod = state->productions;
+  state->productions = prod;
+}
+
 states *get_grammer(char *file_name) {
 
   char buffer[256];
@@ -58,24 +71,33 @@ states *get_grammer(char *file_name) {
 
   while(fgets(buffer,256,fp)) {
     buffer[strlen(buffer)-1] = '\0';
-    prod = (production *)malloc(sizeof(production));
-    prod->next_prod = NULL;
+    prod = get_empty_production();
     prod->head = buffer[0];
     prod->body = (char *)malloc(16*sizeof(char));
-    prod->pos = -1;
     memcpy(prod->body,buffer+3,strlen(buffer)-2);
-    prod->next_prod = grammer->productions;
-    grammer->productions = prod;
+    push_prod_in_state(prod,grammer);
 
   }
 
   return grammer;
 }
 
+void make_augmented_grammer(states *grammer) {
+  production *prod = get_empty_production();
+  prod->head = 'Z';
+  prod->body = (char *)malloc(16*sizeof(char));
+  prod->body[0] = START_SYMBOL;
+  prod->body[1] = '\0';
+  push_prod_in_state(prod,grammer);
+}
+
 int main() {
 
   states *grammer = get_grammer("grammer");
   print_state(grammer);
+  make_augmented_grammer(grammer);
+  print_state(grammer);
+
 
   return 0;
 }
