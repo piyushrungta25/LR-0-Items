@@ -220,3 +220,37 @@ states *goTo(states *state, char c, states *grammer) {
 bool is_empty(states *state) {
   return (state->no_of_prod == 0);
 }
+
+bool char_in_str(char c, char *str) {
+  int i=0;
+  while(str[i] != '\0') {
+    if( str[i] == c ) {
+      return true;
+    }
+    i++;
+  }
+  return false;
+}
+
+char *get_grammer_symbols(states *grammer) {
+  char *symbols = (char *)malloc(256*sizeof(char));
+  int i=0,j;
+  symbols[i] = '\0';
+  production *prod = grammer->productions;
+  while(prod != NULL) {
+    if(!char_in_str(prod->head,symbols)) {
+      symbols[i] = prod->head;
+      i++;
+      symbols[i]='\0';
+    }
+    for(j=0;j<strlen(prod->body);j++) {
+      if(!char_in_str(prod->body[j],symbols)) {
+        symbols[i] = prod->body[j];
+        i++;
+        symbols[i]='\0';
+      }
+    }
+    prod = prod->next_prod;
+  }
+  return symbols;
+}

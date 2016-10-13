@@ -25,5 +25,7 @@ states *duplicate_state(states *);
 states *closure(states *, states *);
 states *goTo(states *, char, states *);
 bool is_empty(states *);
+bool char_in_str(char, char *);
+char *get_grammer_symbols(states *);
 
 #endif

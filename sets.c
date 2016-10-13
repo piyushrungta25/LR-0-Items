@@ -1,4 +1,5 @@
 #include "sets.h"
+#include "states.h"
 
 set *get_empty_set() {
   set *new_set = (set *)malloc(sizeof(set));
@@ -46,4 +47,64 @@ int state_in_set(states *state, set *set) {
     temp = temp->next_state;
   }
   return -1;
+}
+
+void print_set(set *set) {
+  states *state = set->states;
+  int i=0;
+  while(state != NULL) {
+    printf("STATE %d\n",i);
+    print_state(state);
+    state = state->next_state;
+    i++;
+  }
+
+}
+
+set *lr0_items(states *grammer,char start_symbol) {
+  set *set = get_empty_set();
+  production *prod = get_empty_production();
+  prod->head = 'Z';
+  prod->body[0] = start_symbol;
+  prod->body[1] = '\0';
+  prod->pos = 0;
+  states *state = get_empty_state();
+  states *gt;
+  push_prod_in_state(prod,state);
+  push_state_in_set(closure(state,grammer),set);
+  delete_state(state);
+  bool added = false;
+  char *symbols = get_grammer_symbols(grammer);
+  int i=0;
+  int state_no;
+  while(1) {
+    added = false;
+    state = set->states;
+    while(state != NULL) {
+      for(i=0;i<strlen(symbols);i++) {
+        gt = goTo(state,symbols[i],grammer);
+        if(!is_empty(gt)) {
+          state_no = state_in_set(gt,set);
+          if(state_no < 0) {
+            push_state_in_set(gt,set);
+            added = true;
+            // goto with next available state no
+          }
+          else {
+            // goto with state_no
+          }
+        }
+        else {
+          delete_state(gt);
+        }
+      }
+      state = state->next_state;
+    }
+
+    if(!added) {
+      return set;
+    }
+  }
+
+
 }
