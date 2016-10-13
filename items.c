@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include "states.h"
 #include "sets.h"
+#include "gotos.h"
 
 
 int main() {
@@ -13,7 +14,10 @@ int main() {
   print_state(grammer);
   make_augmented_grammer(grammer);
   print_state(grammer);
-  set *set = lr0_items(grammer,START_SYMBOL);
+  mappings *mapping = get_empty_mappings();
+  set *set = lr0_items(grammer,START_SYMBOL,mapping);
   print_set(set);
+  print_mappings(mapping);
+  printf("No of mapping: %d",mapping->no_of_mappings);
   return 0;
 }

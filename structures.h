@@ -21,4 +21,16 @@ typedef struct set{
   states *states;
 }set;
 
+typedef struct gotos{
+  int from;
+  char symbol;
+  int to;
+  struct gotos *next_goto;
+}gotos;
+
+typedef struct mappings{
+  struct gotos *goTo;
+  int no_of_mappings;
+}mappings;
+
 #endif
