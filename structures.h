@@ -17,6 +17,7 @@ typedef struct states{
 }states;
 
 typedef struct set{
+  int no_of_states;
   states *states;
 }set;
 

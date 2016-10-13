@@ -14,6 +14,9 @@ void print_state(states *state) {
       printf("%c",temp_prod->body[i]);
       i++;
     }
+    if(temp_prod->pos == strlen(temp_prod->body))
+      printf("~");
+
 
     printf("\n");
     temp_prod = temp_prod->next_prod;
@@ -141,6 +144,16 @@ states *duplicate_state(states *state) {
   return new_state;
 }
 
+void delete_state(states *state) {
+  production *prod = state->productions;
+  production *next = prod;
+  while(prod != NULL) {
+    next = prod->next_prod;
+    delete_production(prod);
+    prod = next;
+  }
+}
+
 states *closure(states *state, states *grammer) {
   states *closed = duplicate_state(state);
   production *prod = closed->productions;
@@ -180,4 +193,30 @@ states *closure(states *state, states *grammer) {
     }
   }
 
+}
+
+states *goTo(states *state, char c, states *grammer) {
+  production *prod = state->productions;
+  production *temp;
+  states *result = get_empty_state();
+  states *temp_state;
+
+  while(prod != NULL) {
+    if(
+      prod->pos != strlen(prod->body) &&
+      prod->body[prod->pos] == c
+    ) {
+      temp = duplicate_production(prod);
+      temp->pos++;
+      push_prod_in_state(temp,result);
+    }
+    prod = prod->next_prod;
+  }
+  temp_state = closure(result,grammer);
+  delete_state(result);
+  return temp_state;
+}
+
+bool is_empty(states *state) {
+  return (state->no_of_prod == 0);
 }

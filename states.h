@@ -23,5 +23,7 @@ production *duplicate_production(production *);
 void delete_production(production *prod);
 states *duplicate_state(states *);
 states *closure(states *, states *);
+states *goTo(states *, char, states *);
+bool is_empty(states *);
 
 #endif

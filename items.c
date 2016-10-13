@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "states.h"
+#include "sets.h"
 
 
 int main() {
@@ -20,7 +21,14 @@ int main() {
   states *state = get_empty_state();
   push_prod_in_state(prod,state);
   print_state(state);
-  print_state(closure(state,grammer));
+  states *i0 = closure(state,grammer);
+  print_state(i0);
+  set *set = get_empty_set();
+  push_state_in_set(i0,set);
+  i0 = get_state(set,0);
+  print_state(i0);
+  printf("\n\n\n");
+  print_state(goTo(i0,'T',grammer));
 
   return 0;
 }
