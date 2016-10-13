@@ -1,2 +1,2 @@
 all:
-	gcc items.c -o bin/items
+	gcc items.c states.c -o bin/items
