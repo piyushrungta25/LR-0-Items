@@ -152,6 +152,7 @@ void delete_state(states *state) {
     delete_production(prod);
     prod = next;
   }
+  free(state);
 }
 
 states *closure(states *state, states *grammer) {

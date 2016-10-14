@@ -118,3 +118,14 @@ set *lr0_items(states *grammer,char start_symbol, mappings *mapping) {
     }
   }
 }
+
+void delete_set(set *set) {
+  states *state = set->states;
+  states *temp;
+  while(state != NULL) {
+    temp = state->next_state;
+    delete_state(state);
+    state = temp;
+  }
+  free(set);
+}

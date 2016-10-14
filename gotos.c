@@ -54,3 +54,20 @@ bool goto_in_mapping(gotos *map1,mappings *mapping) {
 void delete_gotos(gotos *map) {
   free(map);
 }
+
+void delete_goto(gotos *map) {
+  free(map);
+}
+
+void delete_mapping(mappings *mapping) {
+  gotos *map = mapping->goTo;
+  gotos *temp;
+
+  while(map != NULL) {
+    temp = map->next_goto;
+    delete_goto(map);
+    map = temp;
+  }
+
+  free(mapping);
+}
