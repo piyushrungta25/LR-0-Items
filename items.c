@@ -17,23 +17,13 @@ int main() {
   grammer = get_grammer("grammer");
   make_augmented_grammer(grammer);
   int i;
-  // #pragma omp parallel
-  // {
-  // omp_set_num_threads(4);
+  
   #pragma omp parallel for private(mapping,set)
-  for(i=0;i<1000000;i++) {
-  // print_state(grammer);
-  // print_state(grammer);
-  mapping = get_empty_mappings();
-  set = lr0_items(grammer,START_SYMBOL,mapping);
-  // print_set(set);
-  // print_mappings(mapping);
-  // printf("No of mapping: %d",mapping->no_of_mappings);
-  // delete_state(grammer);
-  // printf("\nNo: %d",i);
-  delete_mapping(mapping);
-  delete_set(set);}
-// }
-  // printf("No: %d",i);
+  for(i=0;i<1000;i++) {
+    mapping = get_empty_mappings();
+    set = lr0_items(grammer,START_SYMBOL,mapping);
+    delete_mapping(mapping);
+    delete_set(set);
+  }
   return 0;
 }

@@ -84,6 +84,7 @@ set *lr0_items(states *grammer,char start_symbol, mappings *mapping) {
     state = set->states;
     j=0;
     while(state != NULL) {
+      // #pragma omp parallel for private(gt,state_no,map)
       for(i=0;i<strlen(symbols);i++) {
         gt = goTo(state,symbols[i],grammer);
         if(!is_empty(gt)) {
