@@ -17,9 +17,11 @@ int main() {
   grammer = get_grammer("grammer");
   make_augmented_grammer(grammer);
   int i;
-  #pragma omp parallel private(mapping, set) shared(grammer)
-  #pragma omp for
-  for(i=0;i<100000;i++) {
+  // #pragma omp parallel
+  // {
+  // omp_set_num_threads(4);
+  #pragma omp parallel for private(mapping,set)
+  for(i=0;i<1000000;i++) {
   // print_state(grammer);
   // print_state(grammer);
   mapping = get_empty_mappings();
@@ -31,6 +33,7 @@ int main() {
   // printf("\nNo: %d",i);
   delete_mapping(mapping);
   delete_set(set);}
+// }
   // printf("No: %d",i);
   return 0;
 }
