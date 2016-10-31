@@ -1,2 +1,2 @@
 all:
-	gcc items.c states.c sets.c gotos.c -o bin/items
+	gcc items.c states.c sets.c gotos.c -fopenmp -o bin/items
