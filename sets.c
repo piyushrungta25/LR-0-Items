@@ -114,6 +114,7 @@ set *lr0_items(states *grammer,char start_symbol, mappings *mapping) {
     }
 
     if(!added) {
+      free(symbols);
       return set;
     }
   }
